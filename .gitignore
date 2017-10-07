@@ -1,0 +1,11 @@
+.terraform
+.vscode
+terraform
+deploy
+deploy.pub
+password
+terraform
+vaultCreds.json
+terraform.tfvars
+terraform.tfstate
+terraform.tfstate.backup
