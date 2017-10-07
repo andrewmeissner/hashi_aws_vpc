@@ -8,6 +8,11 @@ variable "region" {
   type        = "string"
 }
 
+variable "profile" {
+  description = "The name of the profile to use"
+  type        = "string"
+}
+
 variable "ami_id" {
   description = "The CoreOS AMI with consul-template, consul, and nomad binaries installed in /opt/bin"
   type        = "string"

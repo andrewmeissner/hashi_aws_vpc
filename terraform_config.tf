@@ -4,6 +4,6 @@ terraform {
 
 provider "aws" {
   region              = "${var.region}"
-  profile             = "andrew"
+  profile             = "${var.profile}"
   allowed_account_ids = ["${var.account_id}"]
 }

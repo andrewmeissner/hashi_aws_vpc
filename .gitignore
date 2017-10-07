@@ -9,5 +9,5 @@ plan
 vaultCreds.json
 terraform.tfvars
 terraform.tfstate
-terraform.tfstate.lock.info
+.terraform.tfstate.lock.info
 terraform.tfstate.backup
