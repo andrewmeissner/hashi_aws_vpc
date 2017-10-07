@@ -1,6 +1,5 @@
 {
     "variables": {
-        "subnet_id": null,
         "consul_template_ver": "0.19.3",
         "consul_ver": "0.9.3",
         "nomad_ver": "0.7.0-beta1"
@@ -14,9 +13,6 @@
             "ssh_username": "core",
             "source_ami": "ami-82bd41fa",
             "profile": "andrew",
-            "subnet_id": "{{user `subnet_id`}}",
-            "ssh_keypair_name": "deployer-key",
-            "ssh_private_key_file": "../../deploy",
             "tags": {
                 "Name": "core_servers"
             }
@@ -29,15 +25,15 @@
                 "sudo mkdir -p /opt/{bin,conf,data}",
                 "cd /opt",
                 "echo Downloading and installing consul-template...",
-                "sudo wget https://releases.hashicorp.com/consul-template/{{`consul_template_ver`}}/consul-template_{{`consul_template_ver`}}_linux_amd64.zip -O consul-template.zip",
+                "sudo wget https://releases.hashicorp.com/consul-template/{{user `consul_template_ver`}}/consul-template_{{user `consul_template_ver`}}_linux_amd64.zip -O consul-template.zip",
                 "sudo unzip consul-template.zip -d /opt/bin",
                 "sudo rm consul-template.zip",
                 "echo Downloading and installing Consul...",
-                "sudo wget https://releases.hashicorp.com/consul/{{`consul_ver`}}/consul_{{`consul_ver`}}_linux_amd64.zip -O consul.zip",
+                "sudo wget https://releases.hashicorp.com/consul/{{user `consul_ver`}}/consul_{{user `consul_ver`}}_linux_amd64.zip -O consul.zip",
                 "sudo unzip consul.zip -d /opt/bin",
                 "sudo rm consul.zip",
                 "echo Downloading and installing Nomad...",
-                "sudo wget https://releases.hashicorp.com/nomad/{{`nomad_ver`}}/nomad_{{`nomad_ver`}}_linux_amd64.zip -O nomad.zip",
+                "sudo wget https://releases.hashicorp.com/nomad/{{user `nomad_ver`}}/nomad_{{user `nomad_ver`}}_linux_amd64.zip -O nomad.zip",
                 "sudo unzip nomad.zip -d /opt/bin",
                 "sudo rm nomad.zip",
                 "echo Resetting to ignition can run...",
