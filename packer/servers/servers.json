@@ -36,7 +36,7 @@
                 "sudo wget https://releases.hashicorp.com/nomad/{{user `nomad_ver`}}/nomad_{{user `nomad_ver`}}_linux_amd64.zip -O nomad.zip",
                 "sudo unzip nomad.zip -d /opt/bin",
                 "sudo rm nomad.zip",
-                "echo Resetting to ignition can run...",
+                "echo Resetting so ignition can run...",
                 "sudo rm /etc/machine-id",
                 "sudo touch /boot/coreos/first_boot"
             ]
