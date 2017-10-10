@@ -92,3 +92,9 @@ variable "ignition_systemd_ids" {
   type        = "list"
   default     = []
 }
+
+variable "ignition_file_ids" {
+  description = "A list of file unit ids from ignition"
+  type        = "list"
+  default     = []
+}

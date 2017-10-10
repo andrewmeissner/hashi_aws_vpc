@@ -120,6 +120,7 @@ data "ignition_config" "servers_config" {
   groups = ["${var.ignition_group_ids}"]
 
   files = [
+    "${var.ignition_file_ids}",
     "${data.ignition_file.consul_server_config.id}",
     "${data.ignition_file.nomad_server_config.id}",
   ]

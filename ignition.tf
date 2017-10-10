@@ -15,6 +15,19 @@ WantedBy=sockets.target
 EOF
 }
 
+data "ignition_file" "etc_resolv" {
+  path       = "/etc/systemd/resolved.conf.d/00-consul-dns.conf"
+  filesystem = "root"
+  mode = 644
+
+  content {
+    content = <<EOF
+[Resolve]
+DNS=127.0.0.1
+EOF
+  }
+}
+
 data "ignition_user" "ameissner" {
   name                = "ameissner"
   password_hash       = "${file("password")}"

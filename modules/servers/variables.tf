@@ -82,6 +82,12 @@ variable "ignition_systemd_ids" {
   default     = []
 }
 
+variable "ignition_file_ids" {
+  description = "The ids of file units from an ignition data source"
+  type        = "list"
+  default     = []
+}
+
 variable "tags" {
   description = "The tags to attach to the instance"
   type        = "map"

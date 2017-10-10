@@ -78,12 +78,12 @@ data "ignition_file" "consul_client_config" {
     "data_dir": "/opt/data/consul.d",
     "datacenter": "${var.region}",
     "retry_join": ["provider=aws tag_key=Consul-Server tag_value=true region=${var.region}"],
-    "ports": {
-        "dns": 53
-    },
     "node_meta": {
         "agent": "client",
         "type": "{{ env "X_CLIENT_TYPE" }}"
+    },
+    "ports": {
+        "dns": 53
     },
     "node_name": "{{ env "X_CLIENT_TYPE" }}-{{ env "CUSTOM_EC2_INSTANCE_ID" }}",
     "ui": true
@@ -130,6 +130,7 @@ data "ignition_config" "client_config" {
   groups = ["${var.ignition_group_ids}"]
 
   files = [
+    "${var.ignition_file_ids}",
     "${data.ignition_file.consul_client_config.id}",
     "${data.ignition_file.nomad_client_config.id}",
   ]

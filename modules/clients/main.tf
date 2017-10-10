@@ -54,6 +54,6 @@ resource "aws_autoscaling_policy" "policy" {
   autoscaling_group_name = "${aws_autoscaling_group.autoscaling_group.name}"
   adjustment_type        = "ChangeInCapacity"
   policy_type            = "SimpleScaling"
-  cooldown               = 30
+  cooldown               = 5
   scaling_adjustment     = 3
 }

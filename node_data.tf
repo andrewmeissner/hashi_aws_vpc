@@ -16,4 +16,5 @@ module "data_nodes" {
   ignition_user_ids         = ["${data.ignition_user.ameissner.id}"]
   ignition_group_ids        = ["${data.ignition_group.ameissner.id}"]
   ignition_systemd_ids      = ["${data.ignition_systemd_unit.docker_tcp_socket.id}"]
+  ignition_file_ids         = ["${data.ignition_file.etc_resolv.id}"]
 }
