@@ -18,7 +18,7 @@ EOF
 data "ignition_file" "etc_resolv" {
   path       = "/etc/systemd/resolved.conf.d/00-consul-dns.conf"
   filesystem = "root"
-  mode = 644
+  mode       = 644
 
   content {
     content = <<EOF
