@@ -11,7 +11,7 @@
             "instance_type": "t2.micro",
             "region": "us-west-2",
             "ssh_username": "core",
-            "source_ami": "ami-82bd41fa",
+            "source_ami": "ami-1c509764",
             "profile": "andrew",
             "tags": {
                 "Name": "core_servers"
