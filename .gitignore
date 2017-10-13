@@ -1,6 +1,5 @@
 .terraform
 .vscode
-terraform
 deploy
 deploy.pub
 password
