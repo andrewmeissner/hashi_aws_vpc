@@ -2,7 +2,7 @@
     "variables": {
         "consul_template_ver": "0.19.3",
         "consul_ver": "1.0.0",
-        "nomad_ver": "0.7.0-beta1"
+        "nomad_ver": "0.7.0-rc1"
     },
     "builders": [
         {
