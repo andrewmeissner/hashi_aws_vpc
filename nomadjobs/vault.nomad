@@ -28,7 +28,7 @@ job "vault" {
     task "vault" {
       driver = "docker"
       config {
-        image = "vault:0.8.2"
+        image = "vault:0.9.5"
         command = "server"
         network_mode = "host"
         volumes = [
