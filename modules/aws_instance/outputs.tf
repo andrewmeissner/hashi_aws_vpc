@@ -1,6 +1,6 @@
 output "public_ip" {
   description = "The public IP of the newly spun up instance"
-  value       = "${aws_instance.instance.public_ip}"
+  value       = "${aws_instance.instance.*.public_ip}"
 }
 
 output "private_ips" {

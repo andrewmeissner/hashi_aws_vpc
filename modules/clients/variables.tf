@@ -98,3 +98,9 @@ variable "ignition_file_ids" {
   type        = "list"
   default     = []
 }
+
+variable "target_group_arn" {
+  description = "A list of target group arns"
+  type        = "string"
+  default     = ""
+}

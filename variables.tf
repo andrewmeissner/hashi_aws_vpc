@@ -8,6 +8,11 @@ variable "region" {
   type        = "string"
 }
 
+variable "domain" {
+  description = "Domain (blah.com)"
+  type        = "string"
+}
+
 variable "profile" {
   description = "The name of the profile to use"
   type        = "string"
@@ -21,5 +26,4 @@ variable "ami_id" {
 variable "openvpn_pw" {
   description = "The default password for OpenVPN Access Server"
   type        = "string"
-  default     = "myvpntest"
 }

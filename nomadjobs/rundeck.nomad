@@ -54,7 +54,7 @@ job "rundeck" {
 
       resources {
         cpu = 2000
-        memory = 2000
+        memory = 4000
         network {
           mbits = 50
           port "http" {

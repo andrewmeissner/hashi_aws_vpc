@@ -118,7 +118,7 @@ client {
         "docker.cleanup.image" = "true"
         "docker.cleanup.image.delay" = "30m"
         "docker.volumes.enabled" = "true"
-        "docker.privileged.enabled" = "true"
+        "docker.caps.whitelist" = "ALL"
     }
 }
 EOF
@@ -136,9 +136,9 @@ data "ignition_config" "client_config" {
   ]
 
   systemd = [
+    "${var.ignition_systemd_ids}",
     "${data.ignition_systemd_unit.metadata.id}",
     "${data.ignition_systemd_unit.consul_client.id}",
     "${data.ignition_systemd_unit.nomad_client.id}",
-    "${var.ignition_systemd_ids}",
   ]
 }

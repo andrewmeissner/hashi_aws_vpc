@@ -1,8 +1,8 @@
 {
     "variables": {
         "consul_template_ver": "0.19.4",
-        "consul_ver": "1.0.1",
-        "nomad_ver": "0.7.0"
+        "consul_ver": "1.0.7",
+        "nomad_ver": "0.8.1"
     },
     "builders": [
         {
@@ -11,7 +11,14 @@
             "instance_type": "t2.micro",
             "region": "us-west-2",
             "ssh_username": "core",
-            "source_ami": "ami-d803c5a0",
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "root-device-type": "ebs",
+                    "name": "CoreOS-stable-*-hvm"
+                },
+                "most_recent": true
+            },
             "profile": "andrew",
             "tags": {
                 "Name": "core_servers"

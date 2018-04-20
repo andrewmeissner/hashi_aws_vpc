@@ -99,3 +99,8 @@ variable "r53_zone_id" {
   type        = "string"
   default     = ""
 }
+
+variable "vpc_id" {
+  description = "The VPC ID"
+  type        = "string"
+}

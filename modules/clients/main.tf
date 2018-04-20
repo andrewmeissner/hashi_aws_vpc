@@ -23,14 +23,15 @@ resource "aws_launch_configuration" "launch_configuration" {
 }
 
 resource "aws_autoscaling_group" "autoscaling_group" {
-  max_size             = "${var.max_clients}"
-  min_size             = "${var.min_clients}"
-  desired_capacity     = "${var.desired_clients}"
-  launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
-  availability_zones   = ["${var.availability_zones}"]
-  vpc_zone_identifier  = ["${var.subnet_ids}"]
-  health_check_type    = "EC2"
-  termination_policies = ["${var.termination_policies}"]
+  max_size                  = "${var.max_clients}"
+  min_size                  = "${var.min_clients}"
+  desired_capacity          = "${var.desired_clients}"
+  launch_configuration      = "${aws_launch_configuration.launch_configuration.name}"
+  availability_zones        = ["${var.availability_zones}"]
+  vpc_zone_identifier       = ["${var.subnet_ids}"]
+  health_check_type         = "ELB"
+  health_check_grace_period = 300
+  termination_policies      = ["${var.termination_policies}"]
 
   tag {
     key                 = "Name"
@@ -47,6 +48,11 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_autoscaling_attachment" "asg_attachment" {
+  autoscaling_group_name = "${aws_autoscaling_group.autoscaling_group.id}"
+  alb_target_group_arn   = "${var.target_group_arn}"
 }
 
 resource "aws_autoscaling_policy" "policy" {
