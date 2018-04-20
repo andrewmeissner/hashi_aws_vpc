@@ -57,36 +57,6 @@ job "new_vault" {
           }
         }
       }
-
-    //   service {
-    //     name = "vault"
-    //     port = "http"
-    //     check {
-    //       name = "vault"
-    //       type = "tcp"
-    //       interval = "10s"
-    //       timeout = "2s"
-    //     }
-    //   }
-
-    //   template {
-    //     destination = "local/vault_conf.hcl"
-    //     data = <<EOF
-    //     backend "consul" {
-    //         address = "{{ env "attr.unique.network.ip-address" }}:8500"
-    //         path    = "vault"
-    //         scheme  = "http"
-    //         service = "vault"
-    //     }
-
-    //     listener "tcp" {
-    //         address     = "0.0.0.0:8200"
-    //         tls_disable = 1
-    //     }
-    //     ui = true
-    //     disable_mlock = true
-    //     EOF
-    //   }
     }
   }
 }
