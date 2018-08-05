@@ -28,6 +28,22 @@ EOF
   }
 }
 
+data "ignition_file" "docker_daemon" {
+  filesystem = "root"
+  path       = "/etc/docker/daemon.json"
+  mode       = 644
+
+  content {
+    mime = "application/json"
+
+    content = <<EOF
+{
+    "insecure-registries": ["registry.${var.domain}"]
+}
+EOF
+  }
+}
+
 data "ignition_user" "ameissner" {
   name                = "ameissner"
   password_hash       = "${file("password")}"

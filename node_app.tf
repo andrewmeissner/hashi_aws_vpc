@@ -6,7 +6,7 @@ module "app_nodes" {
   desired_clients           = 3
   cluster_name              = "app"
   ami                       = "${var.ami_id}"
-  instance_type             = "t2.micro"
+  instance_type             = "t2.large"
   region                    = "${var.region}"
   availability_zones        = ["${var.region}a", "${var.region}b", "${var.region}c"]
   subnet_ids                = ["${module.vpc.private_subnets}"]

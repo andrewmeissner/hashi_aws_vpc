@@ -16,6 +16,12 @@ variable "nomad_name" {
   default     = "nomad"
 }
 
+variable "vault_name" {
+  description = "The name of the vault servers to register with consul"
+  type        = "string"
+  default     = "vault"
+}
+
 variable "ami" {
   description = "The ami to use"
   type        = "string"

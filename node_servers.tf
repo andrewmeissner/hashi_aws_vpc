@@ -4,6 +4,7 @@ module "core_servers" {
   num_servers          = 3
   consul_name          = "consul"
   nomad_name           = "nomad"
+  vault_name           = "vault"
   ami                  = "${var.ami_id}"
   instance_type        = "t2.micro"
   region               = "${var.region}"

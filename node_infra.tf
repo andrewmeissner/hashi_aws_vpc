@@ -2,7 +2,7 @@ module "infra_nodes" {
   source = "./modules/clients"
 
   min_clients               = 3
-  max_clients               = 9
+  max_clients               = 3
   desired_clients           = 3
   cluster_name              = "infra"
   ami                       = "${var.ami_id}"
@@ -17,5 +17,5 @@ module "infra_nodes" {
   ignition_group_ids        = ["${data.ignition_group.ameissner.id}"]
   ignition_systemd_ids      = ["${data.ignition_systemd_unit.docker_tcp_socket.id}"]
   ignition_file_ids         = ["${data.ignition_file.etc_resolv.id}", "${data.ignition_file.docker_daemon.id}"]
-  target_group_arn          = "${aws_lb_target_group.vault_tg.arn}"
+//   target_group_arn          = "${aws_lb_target_group.vault_tg.arn}"
 }

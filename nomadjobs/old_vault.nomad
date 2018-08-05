@@ -1,4 +1,4 @@
-job "new_vault" {
+job "vault" {
   datacenters = ["us-west-2"]
   type = "service"
   update {
@@ -13,11 +13,11 @@ job "new_vault" {
     value = "infra"
   }
 
-  group "new_vault" {
+  group "vault" {
     constraint {
       distinct_hosts = true
     }
-    count = 1
+    count = 2
     restart {
       attempts = 10
       interval = "5m"
@@ -25,15 +25,11 @@ job "new_vault" {
       mode = "delay"
     }
 
-    task "new_vault" {
+    task "vault" {
       driver = "docker"
       config {
-        image = "vault:0.10.1"
-        command = "server"
+        image = "registry.sofidevops.com/vault:master-29"
         network_mode = "host"
-        cap_add = [
-            "IPC_LOCK",
-        ]
         port_map {
           http = 8200
           cluster = 8201
@@ -41,8 +37,7 @@ job "new_vault" {
       }
 
       env {
-        //   VAULT_LOCAL_CONFIG = "{\"storage\":{\"consul\":{\"address\":\"${NOMAD_IP_http}:8500\",\"scheme\":\"http\",\"service\":\"vault\",\"path\":\"vault\"}},\"listener\":{\"tcp\":{\"address\":\"0.0.0.0:8200\",\"tls_disable\":true}},\"disable_mlock\":true,\"ui\":true}"
-        VAULT_LOCAL_CONFIG = "{\"backend\":{\"consul\":{\"address\":\"${NOMAD_IP_http}:8500\",\"scheme\":\"http\",\"service\":\"vault\",\"path\":\"vault\"}},\"listener\":{\"tcp\":{\"address\":\"0.0.0.0:8200\",\"tls_disable\":true}},\"disable_mlock\":true}"
+          NODE_IP = "${NOMAD_IP_http}"
       }
 
       resources {
@@ -58,6 +53,17 @@ job "new_vault" {
           }
         }
       }
+
+    //   service {
+    //     name = "vault"
+    //     port = "http"
+    //     check {
+    //       name = "vault"
+    //       type = "tcp"
+    //       interval = "10s"
+    //       timeout = "2s"
+    //     }
+    //   }
     }
   }
 }

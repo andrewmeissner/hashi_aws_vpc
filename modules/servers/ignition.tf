@@ -11,7 +11,7 @@ Type=oneshot
 ExecStart=/usr/bin/mkdir --parent /run/metadata
 ExecStart=/usr/bin/bash -c 'echo -e "CUSTOM_EC2_IPV4_LOCAL=$(curl -s\
   --url http://169.254.169.254/2009-04-04/meta-data/local-ipv4\
-  --retry 10)\nX_CONSUL_NAME=$${consul_name}\nX_NOMAD_NAME=$${nomad_name}" > /run/metadata/ec2'
+  --retry 10)\nX_CONSUL_NAME=$${consul_name}\nX_NOMAD_NAME=$${nomad_name}\nX_VAULT_NAME=$${vault_name}" > /run/metadata/ec2'
 EOF
 }
 
@@ -53,6 +53,28 @@ Type=simple
 EnvironmentFile=/run/metadata/ec2
 ExecStartPre=/opt/bin/consul-template -template "/opt/conf/nomad-server.hcl.ctmpl:/opt/conf/nomad-server.hcl" -once
 ExecStart=/opt/bin/nomad agent -config=/opt/conf/nomad-server.hcl
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
+data "ignition_systemd_unit" "vault_server" {
+    name = "vault.service"
+
+    content = <<EOF
+[Unit]
+Description=Vault Server
+After=metadata.service
+Requires=consul.service
+
+[Service]
+User=root
+Type=simple
+EnvironmentFile=/run/metadata/ec2
+ExecStartPre=/opt/bin/consul-template -template "/opt/conf/vault-server.hcl.ctmpl:/opt/conf/vault-server.hcl" -once
+ExecStart=/opt/bin/vault server -config=/opt/conf/vault-server.hcl
 Restart=always
 
 [Install]
@@ -115,6 +137,31 @@ EOF
   }
 }
 
+data "ignition_file" "vault_server_config" {
+    filesystem = "root"
+    path = "/opt/conf/vault-server.hcl.ctmpl"
+    mode = 0644
+
+    content {
+        content = <<EOF
+listener "tcp" {
+    address = "0.0.0.0:8200"
+    tls_disable = true
+}
+
+storage "consul" {
+    address = "{{ env "CUSTOM_EC2_IPV4_LOCAL" }}:8500"
+    scheme = "http"
+    service = "vault"
+    path = "vault"
+}
+
+disable_mlock = true
+ui = true
+EOF
+    }
+}
+
 data "ignition_config" "servers_config" {
   users  = ["${var.ignition_user_ids}"]
   groups = ["${var.ignition_group_ids}"]
@@ -123,12 +170,14 @@ data "ignition_config" "servers_config" {
     "${var.ignition_file_ids}",
     "${data.ignition_file.consul_server_config.id}",
     "${data.ignition_file.nomad_server_config.id}",
+    "${data.ignition_file.vault_server_config.id}"
   ]
 
   systemd = [
     "${data.ignition_systemd_unit.metadata.id}",
     "${data.ignition_systemd_unit.consul_server.id}",
     "${data.ignition_systemd_unit.nomad_server.id}",
+    "${data.ignition_systemd_unit.vault_server.id}",
     "${var.ignition_systemd_ids}",
   ]
 }

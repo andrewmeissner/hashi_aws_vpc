@@ -1,8 +1,9 @@
 {
     "variables": {
-        "consul_template_ver": "0.19.4",
-        "consul_ver": "1.0.7",
-        "nomad_ver": "0.8.1"
+        "consul_template_ver": "0.19.5",
+        "consul_ver": "1.2.2",
+        "nomad_ver": "0.8.4",
+        "vault_ver": "0.10.4"
     },
     "builders": [
         {
@@ -43,6 +44,10 @@
                 "sudo wget https://releases.hashicorp.com/nomad/{{user `nomad_ver`}}/nomad_{{user `nomad_ver`}}_linux_amd64.zip -O nomad.zip",
                 "sudo unzip nomad.zip -d /opt/bin",
                 "sudo rm nomad.zip",
+                "echo Downloading and installing Vault...",
+                "sudo wget https://releases.hashicorp.com/vault/{{user `vault_ver`}}/vault_{{user `vault_ver`}}_linux_amd64.zip -O vault.zip",
+                "sudo unzip vault.zip -d /opt/bin",
+                "sudo rm vault.zip",
                 "echo Resetting so ignition can run...",
                 "sudo rm /etc/machine-id",
                 "sudo touch /boot/coreos/first_boot"
