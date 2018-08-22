@@ -33,7 +33,7 @@ job "rundeck" {
 
       driver = "docker"
       config {
-        image = "jordan/rundeck"
+        image = "jordan/rundeck:3.0.1"
         network_mode = "host"
         tty = true
         port_map {
@@ -42,11 +42,11 @@ job "rundeck" {
       }
 
       env {
-        SERVER_URL = "http://${NOMAD_ADDR_http}"
-        DATABASE_URL = "jdbc:mysql://rundeck-db.service.consul/rundeckdb?autoReconnect=true"
-        RUNDECK_PASSWORD = "admin"
-        DATABASE_ADMIN_USER = "root"
-        DATABASE_ADMIN_PASSWORD = "admin"
+        RUNDECK_PASSWORD = "rundeckpassword"
+        RUNDECK_ADMIN_PASSWORD = "admin"
+        EXTERNAL_SERVER_URL = "http://${NOMAD_ADDR_http}"
+        CLUSTER_MODE = "true"
+        DATABASE_URL = "jdbc:postgresql://rundeck-db.service.consul/rundeckdb"
         RUNDECK_STORAGE_PROVIDER = "db"
         RUNDECK_PROJECT_STORAGE_TYPE = "db"
         NO_LOCAL_MYSQL = "true"

@@ -39,21 +39,20 @@ job "rundeck-db" {
 
       driver = "docker"
       config {
-        image = "mysql"
+        image = "postgres:10.5-alpine"
         network_mode = "host"
         port_map {
-          db = 3306
+          db = 5432
         }
         volumes = [
-          "alloc:/var/lib/mysql"
+          "alloc:/var/lib/postgresql/data"
         ]
       }
 
       env {
-        MYSQL_ROOT_PASSWORD = "admin"
-        MYSQL_DATABASE = "rundeckdb"
-        MYSQL_USER = "root"
-        MYSQL_PASSWORD = "admin"
+            POSTGRES_PASSWORD = "rundeckpassword"
+            POSTGRES_USER = "rundeck"
+            POSTGRES_DB = "rundeckdb"
       }
 
       resources {
@@ -62,7 +61,7 @@ job "rundeck-db" {
         network {
           mbits = 20
           port "db" {
-            static = 3306
+            static = 5432
           }
         }
       }
