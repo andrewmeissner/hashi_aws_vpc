@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"strings"
 
 	consulAPI "github.com/hashicorp/consul/api"
 	vaultAPI "github.com/hashicorp/vault/api"
@@ -14,6 +16,31 @@ var (
 	vaultClient     *vaultAPI.Client
 	vaultRootToken  string
 	vaultUnsealKeys []string
+
+	adminPolicy = `
+path "audit/*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+path "auth/*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+path "cubbyhole/*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+path "secret/*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+path "sys/*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+path "*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}`
 )
 
 func check(err error) {
@@ -39,7 +66,7 @@ func main() {
 
 	initializeVault(vaults)
 	unsealVaults(vaults)
-	fmt.Println("Vaults are unsealed!")
+	addAdminPolicy(vaults)
 }
 
 func initializeVault(vaults []*consulAPI.CatalogService) {
@@ -47,11 +74,19 @@ func initializeVault(vaults []*consulAPI.CatalogService) {
 		panic(fmt.Errorf("can't initialize 0 vaults from consul"))
 	}
 
-	service := vaults[0]
+	var config vaultAPI.Config
 
-	vClient, err := vaultAPI.NewClient(&vaultAPI.Config{
-		Address: fmt.Sprintf("http://%s:%d", service.Address, service.ServicePort),
-	})
+	if isLocalhost() {
+		config = vaultAPI.Config{
+			Address: fmt.Sprintf("http://localhost:8200"),
+		}
+	} else {
+		config = vaultAPI.Config{
+			Address: fmt.Sprintf("http://%s:%d", vaults[0].Address, vaults[0].ServicePort),
+		}
+	}
+
+	vClient, err := vaultAPI.NewClient(&config)
 
 	initResp, err := vClient.Sys().Init(&vaultAPI.InitRequest{
 		SecretShares:    1,
@@ -67,20 +102,57 @@ func initializeVault(vaults []*consulAPI.CatalogService) {
 	vClient.SetToken(vaultRootToken)
 
 	vaultClient = vClient
+	fmt.Println("Vaults are initialized!")
 }
 
 func unsealVaults(vaults []*consulAPI.CatalogService) {
-	for _, vault := range vaults {
-		vaultClient.SetAddress(fmt.Sprintf("http://%s:%d", vault.Address, vault.ServicePort))
+	if isLocalhost() {
+		vaultClient.SetAddress("http://localhost:8200")
 		for _, key := range vaultUnsealKeys {
 			_, err := vaultClient.Sys().Unseal(key)
 			check(err)
 		}
+	} else {
+		for _, vault := range vaults {
+			vaultClient.SetAddress(fmt.Sprintf("http://%s:%d", vault.Address, vault.ServicePort))
+			for _, key := range vaultUnsealKeys {
+				_, err := vaultClient.Sys().Unseal(key)
+				check(err)
+			}
+		}
 	}
+
+	if len(vaults) > 0 {
+		fmt.Println("Vaults are unsealed!")
+	}
+}
+
+func addAdminPolicy(vaults []*consulAPI.CatalogService) {
+	if isLocalhost() {
+		vaultClient.SetAddress("http://localhost:8200")
+	} else {
+		vaultClient.SetAddress(fmt.Sprintf("http://%s:%d", vaults[0].Address, vaults[0].ServicePort))
+	}
+
+	for i := 0; i < 5; i++ {
+		if err := vaultClient.Sys().PutPolicy("admin", strings.TrimSpace(adminPolicy)); err != nil {
+			continue
+		}
+		fmt.Println("admin policy added!")
+		return
+	}
+	fmt.Println("failed to add admin policy!")
 }
 
 func writeCredentials(resp *vaultAPI.InitResponse) {
 	bs, err := json.Marshal(resp)
 	check(err)
 	check(ioutil.WriteFile("vaultCreds.json", bs, 0644))
+}
+
+func isLocalhost() bool {
+	consulHTTPAddr := os.Getenv("CONSUL_HTTP_ADDR")
+	localhost := strings.Contains(consulHTTPAddr, "localhost")
+	loopbackAddr := strings.Contains(consulHTTPAddr, "127.0.0.1")
+	return localhost || loopbackAddr
 }
