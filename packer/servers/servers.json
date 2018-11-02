@@ -1,9 +1,9 @@
 {
     "variables": {
         "consul_template_ver": "0.19.5",
-        "consul_ver": "1.2.3",
-        "nomad_ver": "0.8.5",
-        "vault_ver": "0.11.1"
+        "consul_ver": "1.3.0",
+        "nomad_ver": "0.8.6",
+        "vault_ver": "0.11.4"
     },
     "builders": [
         {
@@ -18,7 +18,9 @@
                     "root-device-type": "ebs",
                     "name": "CoreOS-stable-*-hvm"
                 },
-                "owners": ["595879546273"],
+                "owners": [
+                    "595879546273"
+                ],
                 "most_recent": true
             },
             "profile": "andrew",
