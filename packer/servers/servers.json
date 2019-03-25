@@ -1,9 +1,9 @@
 {
     "variables": {
-        "consul_template_ver": "0.19.5",
-        "consul_ver": "1.3.0",
-        "nomad_ver": "0.8.6",
-        "vault_ver": "0.11.4"
+        "consul_template_ver": "0.20.0",
+        "consul_ver": "1.4.4",
+        "nomad_ver": "0.8.7",
+        "vault_ver": "1.1.0"
     },
     "builders": [
         {

@@ -82,6 +82,9 @@ data "ignition_file" "consul_client_config" {
         "agent": "client",
         "type": "{{ env "X_CLIENT_TYPE" }}"
     },
+    "performance": {
+      "raft_multiplier": 1
+    },
     "ports": {
         "dns": 53
     },

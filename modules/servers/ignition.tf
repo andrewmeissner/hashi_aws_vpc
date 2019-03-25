@@ -10,7 +10,7 @@ User=root
 Type=oneshot
 ExecStart=/usr/bin/mkdir --parent /run/metadata
 ExecStart=/usr/bin/bash -c 'echo -e "CUSTOM_EC2_IPV4_LOCAL=$(curl -s\
-  --url http://169.254.169.254/2009-04-04/meta-data/local-ipv4\
+  --url http://169.254.169.254/latest/meta-data/local-ipv4\
   --retry 10)\nX_CONSUL_NAME=$${consul_name}\nX_NOMAD_NAME=$${nomad_name}\nX_VAULT_NAME=$${vault_name}" > /run/metadata/ec2'
 EOF
 }
@@ -61,9 +61,9 @@ EOF
 }
 
 data "ignition_systemd_unit" "vault_server" {
-    name = "vault.service"
+  name = "vault.service"
 
-    content = <<EOF
+  content = <<EOF
 [Unit]
 Description=Vault Server
 After=metadata.service
@@ -92,23 +92,26 @@ data "ignition_file" "consul_server_config" {
 
     content = <<EOF
 {
-    "advertise_addr": "{{ env "CUSTOM_EC2_IPV4_LOCAL" }}",
-    "bind_addr": "0.0.0.0",
-    "bootstrap_expect": 3,
-    "client_addr": "0.0.0.0",
-    "data_dir": "/opt/data/consul.d",
-    "datacenter": "${var.region}",
-    "retry_join": ["provider=aws tag_key=Consul-Server tag_value=true region=${var.region}"],
-    "node_meta": {
-        "agent": "server",
-        "type": "core"
-    },
-    "ports": {
-        "dns": 53
-    },
-    "node_name": "{{ env "X_CONSUL_NAME" }}",
-    "server": true,
-    "ui": true
+  "advertise_addr": "{{ env "CUSTOM_EC2_IPV4_LOCAL" }}",
+  "bind_addr": "0.0.0.0",
+  "bootstrap_expect": 3,
+  "client_addr": "0.0.0.0",
+  "data_dir": "/opt/data/consul.d",
+  "datacenter": "${var.region}",
+  "retry_join": ["provider=aws tag_key=Consul-Server tag_value=true region=${var.region}"],
+  "node_meta": {
+    "agent": "server",
+    "type": "core"
+  },
+  "performance": {
+    "raft_multiplier": 1
+  },
+  "ports": {
+    "dns": 53
+  },
+  "node_name": "{{ env "X_CONSUL_NAME" }}",
+  "server": true,
+  "ui": true
 }
 EOF
   }
@@ -138,12 +141,12 @@ EOF
 }
 
 data "ignition_file" "vault_server_config" {
-    filesystem = "root"
-    path = "/opt/conf/vault-server.hcl.ctmpl"
-    mode = 0644
+  filesystem = "root"
+  path       = "/opt/conf/vault-server.hcl.ctmpl"
+  mode       = 0644
 
-    content {
-        content = <<EOF
+  content {
+    content = <<EOF
 listener "tcp" {
     address = "0.0.0.0:8200"
     tls_disable = true
@@ -159,7 +162,7 @@ storage "consul" {
 disable_mlock = true
 ui = true
 EOF
-    }
+  }
 }
 
 data "ignition_config" "servers_config" {
@@ -170,7 +173,7 @@ data "ignition_config" "servers_config" {
     "${var.ignition_file_ids}",
     "${data.ignition_file.consul_server_config.id}",
     "${data.ignition_file.nomad_server_config.id}",
-    "${data.ignition_file.vault_server_config.id}"
+    "${data.ignition_file.vault_server_config.id}",
   ]
 
   systemd = [

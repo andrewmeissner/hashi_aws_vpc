@@ -15,6 +15,17 @@ variable "num_nodes" {
   default     = 1
 }
 
+variable "volume_type" {
+  description = "The type of volume"
+  type        = "string"
+  default     = "standard"
+}
+
+variable "volume_size" {
+  description = "The size of the volume in GB"
+  default     = 8
+}
+
 variable "ami" {
   description = "The AMI to use"
   type        = "string"

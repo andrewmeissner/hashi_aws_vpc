@@ -67,6 +67,8 @@ func main() {
 	initializeVault(vaults)
 	unsealVaults(vaults)
 	addAdminPolicy(vaults)
+	enableUserpassAuth()
+	addTestAccount()
 }
 
 func initializeVault(vaults []*consulAPI.CatalogService) {
@@ -138,14 +140,14 @@ func addAdminPolicy(vaults []*consulAPI.CatalogService) {
 		if err := vaultClient.Sys().PutPolicy("admin", strings.TrimSpace(adminPolicy)); err != nil {
 			continue
 		}
-		fmt.Println("admin policy added!")
+		fmt.Println("Admin policy added!")
 		return
 	}
-	fmt.Println("failed to add admin policy!")
+	fmt.Println("Failed to add admin policy!")
 }
 
 func writeCredentials(resp *vaultAPI.InitResponse) {
-	bs, err := json.Marshal(resp)
+	bs, err := json.MarshalIndent(resp, "", "    ")
 	check(err)
 	check(ioutil.WriteFile("vaultCreds.json", bs, 0644))
 }
@@ -155,4 +157,18 @@ func isLocalhost() bool {
 	localhost := strings.Contains(consulHTTPAddr, "localhost")
 	loopbackAddr := strings.Contains(consulHTTPAddr, "127.0.0.1")
 	return localhost || loopbackAddr
+}
+
+func enableUserpassAuth() {
+	if err := vaultClient.Sys().EnableAuth("userpass", "userpass", "username and password authentication"); err != nil {
+		panic(err)
+	}
+	fmt.Println("Enabled userpass auth backend!")
+}
+
+func addTestAccount() {
+	if _, err := vaultClient.Logical().Write("auth/userpass/users/admin", map[string]interface{}{"password": "admin", "policies": "admin"}); err != nil {
+		panic(err)
+	}
+	fmt.Println("Added test account to userpass auth backend!")
 }

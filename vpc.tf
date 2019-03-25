@@ -31,7 +31,7 @@ resource "aws_main_route_table_association" "terraform_public_main" {
 
 resource "aws_vpc_dhcp_options" "dns_resolver" {
   domain_name          = "us-west-2.compute.internal"
-  domain_name_servers  = ["127.0.0.1", "172.34.0.2"]
+  domain_name_servers  = ["172.34.0.2", "127.0.0.1"]
   ntp_servers          = ["127.0.0.1"]
   netbios_name_servers = ["127.0.0.1"]
   netbios_node_type    = 2

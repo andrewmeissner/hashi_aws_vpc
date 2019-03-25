@@ -2,7 +2,7 @@ module "openvpnas" {
   source = "./modules/aws_instance"
 
   name                        = "OpenVPN-AS"
-  ami                         = "ami-048cc2cefbea3b252"
+  ami                         = "ami-ffd74b87"
   key_name                    = "${aws_key_pair.deployer.key_name}"
   possible_subnets            = ["${module.vpc.public_subnets}"]
   security_group_ids          = ["${aws_security_group.ssh.id}", "${aws_security_group.openvpn.id}"]

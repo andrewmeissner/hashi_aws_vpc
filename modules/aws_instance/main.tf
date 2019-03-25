@@ -9,4 +9,10 @@ resource "aws_instance" "instance" {
   iam_instance_profile        = "${var.iam_profile}"
   user_data                   = "${var.user_data}"
   tags                        = "${merge(var.tags, map("Name", format("%s%s%s", var.name, var.num_nodes > 1 ? "-" : "", var.num_nodes > 1 ? "${count.index+1}" : "")))}"
+
+  root_block_device {
+    volume_type = "${var.volume_type}"
+
+    volume_size = "${var.volume_size}"
+  }
 }

@@ -1,9 +1,9 @@
 module "data_nodes" {
   source = "./modules/clients"
 
-  min_clients               = 3
+  min_clients               = 0
   max_clients               = 6
-  desired_clients           = 3
+  desired_clients           = 0
   cluster_name              = "data"
   ami                       = "${var.ami_id}"
   instance_type             = "t2.large"
